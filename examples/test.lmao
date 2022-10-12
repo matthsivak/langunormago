@@ -1,0 +1,7 @@
+// This is comment
+// This is var
+let x = 10;
+
+if (x > 9) {
+  x = 8;
+}
