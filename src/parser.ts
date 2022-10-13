@@ -3,21 +3,24 @@ import {Token, TokenType, tokenTypeToString} from './lexer'
 export enum NodeType {
   Var,
   Const,
-
   BinOp,
+  MathOp,
   UnaryOp,
   If
 }
 
-export enum BinOpType {
-  Assign
+export enum MathOpType {
+  Addition,
+  Subtraction,
+  Multiplication,
+  Division
 }
 
 export enum UnaryOpType {
   Not
 }
 
-export type Node = NodeBase | NodeVar | NodeConst | NodeBinOp | NodeIf
+export type Node = NodeBase | NodeVar | NodeConst | NodeMathOp | NodeIf
 
 interface NodeBase {
   type: NodeType
@@ -26,18 +29,19 @@ interface NodeBase {
 interface NodeVar extends NodeBase {
   type: NodeType.Var
   name: string
+  value: string | number | NodeMathOp
 }
 
 interface NodeConst extends NodeBase {
   type: NodeType.Const
-  value: string | number
+  name: string
+  value: string | number | MathOpType
 }
 
-interface NodeBinOp extends NodeBase {
-  type: NodeType.BinOp
-  opType: BinOpType
-  left: NodeVar | NodeConst
-  right: NodeVar | NodeConst
+interface NodeMathOp extends NodeBase {
+  type: NodeType.MathOp
+  members: Array<number | string>
+  operators: Array<MathOpType>
 }
 
 interface NodeIf extends NodeBase {
@@ -88,19 +92,53 @@ class Parser {
   }
 
   private parseLet() {
-    let buffer: Array<Token> = []
+    const tokensOfMathOp: Array<Token> = []
     // let
     this.advance()
     this.expectType(TokenType.Identifier)
     const name = this.currentToken.value
+    if (typeof name !== 'string') throw new Error("Name of variable can't be number")
+
     // <name>
     this.advance()
     this.expectType(TokenType.Symbol)
     this.expectValue('=')
     // =
     this.advance()
-    // TODO: parse expression
-    console.log(buffer)
+
+    while (this.currentToken.value != ';') {
+      tokensOfMathOp.push(this.currentToken)
+      this.advance()
+    }
+
+    const operatorsOfMathOp: Array<MathOpType> = tokensOfMathOp
+      .filter(token => token.type == TokenType.Symbol)
+      .map((token): MathOpType => {
+        if (token.value === '+') {
+          return MathOpType.Addition
+        } else if (token.value === '-') {
+          return MathOpType.Subtraction
+        } else if (token.value === '/') {
+          return MathOpType.Division
+        } else if (token.value === '*') {
+          return MathOpType.Multiplication
+        } else {
+          throw new Error('Unexpected token at ' + token.pos)
+        }
+      })
+    const membersOfMathOp = tokensOfMathOp.filter(token => token.type == TokenType.Number || token.type == TokenType.String)
+
+    const node: NodeVar = {
+      type: NodeType.Var,
+      name: name,
+      value: {
+        type: NodeType.MathOp,
+        members: membersOfMathOp.map(token => token.value),
+        operators: operatorsOfMathOp
+      }
+    }
+    this.tree.push(node)
+    // <value>
   }
 
   public parse() {
@@ -110,8 +148,6 @@ class Parser {
           switch (this.currentToken.value) {
             case 'let':
               this.parseLet()
-              break
-            case 'if':
               break
           }
           break

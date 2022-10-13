@@ -16,7 +16,7 @@ if (filename) {
       let src: string = fileBuffer.toString()
       try {
         let tokens = tokenize(src, filename.split('/').slice(-1)[0])
-        console.log(tokens)
+        // console.log(tokens)
         let ast = parse(tokens)
         console.log(ast)
       } catch (err: unknown) {

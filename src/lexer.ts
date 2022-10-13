@@ -77,7 +77,7 @@ class Lexer {
 
   private makeText() {
     let buffer: string = ''
-    let tmpPos: Pos = { ...this.pos}
+    let tmpPos: Pos = {...this.pos}
     while ('_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.includes(this.currentChar)) {
       buffer += this.currentChar
       this.advance()

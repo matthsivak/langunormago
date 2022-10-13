@@ -1,7 +1,10 @@
 // This is comment
 // This is var
-let x = 10;
+let x = 10 + 2;
 
 if (x > 9) {
   x = 8;
 }
+
+
+let y = "test 2";
