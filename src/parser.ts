@@ -1,6 +1,6 @@
 import {Token, TokenType, tokenTypeToString} from './lexer'
 
-enum NodeType {
+export enum NodeType {
   Var,
   Const,
 
@@ -9,15 +9,15 @@ enum NodeType {
   If
 }
 
-enum BinOpType {
+export enum BinOpType {
   Assign
 }
 
-enum UnaryOpType {
+export enum UnaryOpType {
   Not
 }
 
-type Nodes = NodeBase | NodeVar | NodeConst | NodeBinOp | NodeIf
+export type Node = NodeBase | NodeVar | NodeConst | NodeBinOp | NodeIf
 
 interface NodeBase {
   type: NodeType
@@ -48,19 +48,18 @@ interface NodeIf extends NodeBase {
     left: NodeVar | NodeConst
     right: NodeVar | NodeConst
   }
-  then: Array<Nodes>
+  then: Array<Node>
 }
 
 export class Parser {
-  private pos: number = -1
-  private currentToken: Token = new Token(TokenType.Identifier, 'idk', {i: 0, line: 0, col: 0})
-  private tokens: Array<Token>
-  private tree: Array<Nodes> = []
+  public pos: number = -1
+  public currentToken: Token = new Token(TokenType.Identifier, 'idk', {i: 0, line: 0, col: 0})
+  public tokens: Array<Token>
+  public tree: Array<Node> = []
 
   constructor(tokens: Array<Token>) {
     this.tokens = tokens
     this.advance()
-    this.parse()
   }
 
   private advance() {
@@ -94,20 +93,17 @@ export class Parser {
     this.advance()
     this.expectType(TokenType.Identifier)
     const name = this.currentToken.value
-    //
+    // <name>
     this.advance()
     this.expectType(TokenType.Symbol)
     this.expectValue('=')
-
+    // =
     this.advance()
-
-
-
-
+    // TODO: parse expression
     console.log(buffer)
   }
 
-  private parse() {
+  public parse() {
     while (this.pos < this.tokens.length) {
       switch (this.currentToken.type) {
         case TokenType.Keyword:
@@ -120,8 +116,15 @@ export class Parser {
           }
           break
       }
+      this.advance()
     }
   }
+}
+
+export default function parse(tokens: Array<Token>) {
+  let p = new Parser(tokens)
+  p.parse()
+  return p.tree
 }
 
 /*
