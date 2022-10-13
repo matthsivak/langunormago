@@ -33,7 +33,7 @@ export interface Pos {
   col: number
 }
 
-export class Lexer {
+class Lexer {
   public pos: Pos = {i: -1, line: 0, col: -1}
   public currentChar: string = ''
   public tokens: Array<Token> = []

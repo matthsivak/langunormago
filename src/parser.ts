@@ -51,7 +51,7 @@ interface NodeIf extends NodeBase {
   then: Array<Node>
 }
 
-export class Parser {
+class Parser {
   public pos: number = -1
   public currentToken: Token = new Token(TokenType.Identifier, 'idk', {i: 0, line: 0, col: 0})
   public tokens: Array<Token>
@@ -77,8 +77,8 @@ export class Parser {
     }
   }
 
-  private expectValue(...values: Array<string>) {
-    if (!values.includes(this.currentToken.value.toString())) {
+  private expectValue(...values: Array<string | number>) {
+    if (!values.includes(this.currentToken.value)) {
       if (values.length === 1) {
         throw new Error(`Expected ${values[0]}, got ${this.currentToken.value}`)
       } else {
@@ -181,35 +181,6 @@ export default function parse(tokens: Array<Token>) {
 ]
 */
 
-// export class Node {
-//   public type: NodeType
-//   public name?: string
-//   public value?: any
-//   public opType?: BinOpType | UnaryOpType
-//   public left?: Node
-//   public right?: Node
-//   constructor(type: NodeType, ...data) {
-//     this.type = type
-//     switch (type) {
-//       case NodeType.Var:
-//         this.name = data[0]
-//         break
-//       case NodeType.Const:
-//         this.value = data[0]
-//         break
-//       case NodeType.BinOp:
-//         this.opType = data[0]
-//         this.left = data[1]
-//         this.right = data[2]
-//         break
-//       case NodeType.UnaryOp:
-//         this.opType = data[0]
-//         this.right = data[1]
-//         break
-//     }
-//   }
-// }
-
 const randomData: Array<Token> = [
   {type: 0, value: 'let', pos: {i: 34, line: 2, col: 1}},
   {type: 1, value: 'x', pos: {i: 38, line: 2, col: 5}},
@@ -229,4 +200,4 @@ const randomData: Array<Token> = [
   // {type: 2, value: '}', pos: {i: 72, line: 7, col: 0}}
 ]
 
-new Parser(randomData)
+// console.log(parse(randomData))
