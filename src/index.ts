@@ -1,6 +1,6 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env bun run
 
-import fs, {fstat, Stats} from 'fs'
+import fs, {Stats} from 'fs'
 import tokenize from './lexer'
 import parse from './parser'
 
@@ -15,7 +15,7 @@ if (filename) {
       const fileBuffer: Buffer = fs.readFileSync(process.cwd() + '/' + filename)
       let src: string = fileBuffer.toString()
       try {
-        let tokens = tokenize(src, filename.split("/").slice(-1)[0])
+        let tokens = tokenize(src, filename.split('/').slice(-1)[0])
         console.log(tokens)
         let ast = parse(tokens)
         console.log(ast)
