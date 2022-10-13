@@ -58,10 +58,8 @@ export class Lexer {
       return
     }
     if (this.currentChar !== '\n') {
-      console.log('col++')
       this.pos.col++
     } else {
-      console.log('line++')
       this.pos.line++
       this.pos.col = 0
     }
